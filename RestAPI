@@ -1,0 +1,54 @@
+from flask import Flask, jsonify, request
+import hashlib
+import requests
+import math
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return 'Hello, World!'
+
+@app.route('/api/add', methods=['POST'])
+def add():
+    data = request.get_json()
+    sum = data['a'] + data['b']
+    return jsonify({'sum': sum})
+
+@app.route('/md5/<string>', methods=['GET'])
+def md5(string):
+    md5_hash = hashlib.md5(string.encode()).hexdigest()
+    return jsonify({'md5': md5_hash})
+
+@app.route('/factorial/<int:n>', methods=['GET'])
+def factorial_n(n):
+    result = math.factorial(n)
+    return jsonify({'factorial': result})
+
+@app.route('/fibonacci/<int:n>', methods=['GET'])
+def fibonacci_n(n):
+    a, b = 0, 1
+    for i in range(n):
+        a, b = b, a + b
+    return jsonify({'fibonacci': a})
+
+@app.route('/is-prime/<int:n>', methods=['GET'])
+def is_prime(n):
+    if n < 2:
+        return jsonify({'is_prime': False})
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return jsonify({'is_prime': False})
+    return jsonify({'is_prime': True})
+
+@app.route('/slack-alert/<string>', methods=['POST'])
+def slack_alert(string):
+    url = "https://hooks.slack.com/services/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" 
+    payload = {"text": string}
+    response = requests.post(url, json=payload)
+    if response.status_code != 200:
+        return jsonify({'message': 'Failed to send Slack alert'}), 500
+    return jsonify({'message': 'Slack alert sent successfully'})
+
+if __name__ == '__main__':
+    app.run(port=4000)
