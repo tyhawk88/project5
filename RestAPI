@@ -25,12 +25,30 @@ def factorial_n(n):
     result = math.factorial(n)
     return jsonify({'factorial': result})
 
+def fibo(params):
+  i = 0
+  j = 1
+  sequence = []
+  current_operation = 0
+  index = 0
+  while True:
+    # We appends now, since f(0) = 0 = i_initial , f(1) = 1 =j_initial
+    sequence.append(i)
+    # prepare next opération
+    current_operation = i + j
+    i = j
+    j = current_operation
+    # Stop condition
+    if i > params:
+      return sequence
+    else:
+      index += 1
+
+  return sequence
 @app.route('/fibonacci/<int:n>', methods=['GET'])
-def fibonacci_n(n):
-    a, b = 0, 1
-    for i in range(n):
-        a, b = b, a + b
-    return jsonify({'fibonacci': a})
+def get_fibo(n):
+    return jsonify(fibo(n))
+
 
 @app.route('/is-prime/<int:n>', methods=['GET'])
 def is_prime(n):
@@ -43,7 +61,7 @@ def is_prime(n):
 
 @app.route('/slack-alert/<string>', methods=['POST'])
 def slack_alert(string):
-    url = "https://hooks.slack.com/services/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" 
+    url = "https://hooks.slack.com/services/T257UBDHD/B04R61ZHJPJ/qj8WlpYourZ0iPGOX2niFrRX" 
     payload = {"This message is posted to #group-6.": string}
     response = requests.post(url, json=payload)
     if response.status_code != 200:
