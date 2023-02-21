@@ -43,8 +43,8 @@ def is_prime(n):
 
 @app.route('/slack-alert/<string>', methods=['POST'])
 def slack_alert(string):
-    url = "https://hooks.slack.com/services/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" 
-    payload = {"text": string}
+    url = "https://hooks.slack.com/services/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" 
+    payload = {"This message is posted to #group-6.": string}
     response = requests.post(url, json=payload)
     if response.status_code != 200:
         return jsonify({'message': 'Failed to send Slack alert'}), 500
